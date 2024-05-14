@@ -2,6 +2,7 @@
 import gspread
 import csv
 import gzip
+import re
 
 gc = gspread.service_account(filename='/home/enti/.config/gspread/service_account.json')
 sht = gc.open("dmesg")
@@ -36,6 +37,10 @@ while not salir:
 				for registro in valores:
 					registros_formateados += ";".join(registro) + "\n"
 				print(registros_formateados)
+	
+				#busqueda basada en expresiones regulares
+
+				
 
 				#Declaro la variable con el nombre.csv
 				filename = f"{seleccion}.csv"
