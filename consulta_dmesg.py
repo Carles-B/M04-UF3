@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import gspread
-
+import csv
+import gzip
 
 gc = gspread.service_account(filename='/home/enti/.config/gspread/service_account.json')
 sht = gc.open("dmesg")
@@ -23,8 +24,34 @@ while not salir:
 		print("Saiendo del programa...")
 		salir = True
 	else:
-		numero = int(escoger) - 1 
-		seleccion = lista_formateada[numero]
-		valores = sht.worksheet(seleccion).get_values()
-		print(valores)
+		try:
+				numero = int(escoger) - 1 
+				seleccion = lista_formateada[numero]
+				valores = sht.worksheet(seleccion).get_values()
+				print("\nRegistros en la hoja:", seleccion)
+				
+				registros_formateados = ""
+
+				#Por cada linea (registro) junta los elementos de este separandolos por ;
+				for registro in valores:
+					registros_formateados += ";".join(registro) + "\n"
+				print(registros_formateados)
+
+				#Declaro la variable con el nombre.csv
+				filename = f"{seleccion}.csv"
+
+				#Abro el archivo y escribo ("w") los registros en el formato correcto
+				with open(filename, "w", newline="") as file_csv:
+					file_csv.write(registros_formateados)
+				print(f"los archivos se han guardado en {filename}")
+
+				#Hago gzip del archivo.csv
+				with open(filename, "rb") as f_in:
+					with gzip.open(f"{filename}.gz", "wb") as f_out:
+						f_out.writelines(f_in)
+						print(f"El gzip del csv se ha guardado correctamente con nombre: {filename}.gz")
+
+		except ValueError:
+			print("Por fabor, introduce un NÚMERO y que sea válido (entre 1 y 5).")
+
 
